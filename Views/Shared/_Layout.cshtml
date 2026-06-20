@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MediCore City Hospital</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalManagement.styles.css" asp-append-version="true" />
+    <style>
+        body { background-color: #f4f6f9; }
+        .navbar-brand { font-weight: 700; font-size: 1.2rem; color: #0d6efd !important; }
+        .sidebar { min-height: calc(100vh - 56px); background: #fff; border-right: 1px solid #dee2e6; padding-top: 1rem; }
+        .sidebar .nav-link { color: #495057; padding: .5rem 1rem; border-radius: 6px; margin: 2px 8px; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #e7f1ff; color: #0d6efd; }
+        .sidebar .nav-link i { margin-right: 8px; width: 16px; }
+        .sidebar-heading { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; padding: .5rem 1.2rem; margin-top: .5rem; }
+        .main-content { padding: 1.5rem; }
+        .page-header { margin-bottom: 1.5rem; }
+        .card { border: none; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-radius: 10px; }
+        .stat-card { border-left: 4px solid; }
+        .badge-emergency { background-color: #dc3545; }
+        .badge-opd { background-color: #0d6efd; }
+        footer { padding: .75rem 0; font-size: .85rem; }
+        .toast-container { position: fixed; top: 70px; right: 20px; z-index: 1100; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    &#x2695; MediCore City Hospital
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Patients" asp-action="Index">Patients</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Doctors" asp-action="Index">Doctors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Admissions" asp-action="Index">Admissions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Treatments" asp-action="Index">Treatments</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block sidebar px-0">
+                <div class="sidebar-heading">Main</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                           asp-controller="Home" asp-action="Index">
+                            &#x1F4CA; Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <div class="sidebar-heading">Management</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Patients" ? "active" : "")"
+                           asp-controller="Patients" asp-action="Index">
+                            &#x1F9D1; Patients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Doctors" ? "active" : "")"
+                           asp-controller="Doctors" asp-action="Index">
+                            &#x1F3E5; Doctors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admissions" ? "active" : "")"
+                           asp-controller="Admissions" asp-action="Index">
+                            &#x1F6CF; Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Treatments" ? "active" : "")"
+                           asp-controller="Treatments" asp-action="Index">
+                            &#x1F48A; Treatments
+                        </a>
+                    </li>
+                </ul>
+                <div class="sidebar-heading">Quick Actions</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Patients" asp-action="Create">+ New Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Admissions" asp-action="Create">+ New Admission</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-top bg-white text-center text-muted mt-3">
+        <div class="container py-2">
+            &copy; 2026 MediCore City Hospital &mdash; Group GCN: 2 (Reg: 67428, 68209)
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
