@@ -1,0 +1,78 @@
+@model HospitalManagement.Models.Treatment
+@{
+    ViewData["Title"] = "Treatment Details";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="mb-0 fw-bold">Treatment #@Model.TreatmentId</h4>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.TreatmentId" class="btn btn-warning btn-sm">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Treatment Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Treatment Name</dt>
+                    <dd class="col-sm-8">@Model.TreatmentName</dd>
+                    <dt class="col-sm-4">Treatment Type</dt>
+                    <dd class="col-sm-8"><span class="badge bg-info">@Model.TreatmentType</span></dd>
+                    <dt class="col-sm-4">Treatment Date</dt>
+                    <dd class="col-sm-8">@Model.TreatmentDate.ToString("MMM dd, yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Cost</dt>
+                    <dd class="col-sm-8">@Model.Cost.ToString("C")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Description</div>
+            <div class="card-body">
+                <p class="mb-0">@Model.Description</p>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Medication))
+        {
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white fw-semibold">Medication</div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.Medication</p>
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white fw-semibold">Additional Notes</div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.Notes</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Assigned Doctor</div>
+            <div class="card-body">
+                <h5 class="fw-bold">@Model.Doctor?.FullName</h5>
+                <p class="text-muted mb-0">@Model.Doctor?.Specialization</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Related Admission</div>
+            <div class="card-body">
+                <h5 class="fw-bold">Admission #@Model.AdmissionId</h5>
+                <p class="text-muted mb-0">Patient: @Model.Admission?.Patient?.FullName</p>
+                <a asp-controller="Admissions" asp-action="Details" asp-route-id="@Model.AdmissionId" class="btn btn-sm btn-outline-primary mt-2">View Admission</a>
+            </div>
+        </div>
+    </div>
+</div>
