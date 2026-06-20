@@ -1,0 +1,92 @@
+@model IEnumerable<HospitalManagement.Models.Doctor>
+@{
+    ViewData["Title"] = "Doctors";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="mb-0 fw-bold">Doctors</h4>
+    <a asp-action="Create" class="btn btn-primary btn-sm">+ Add Doctor</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-sm" placeholder="Search name or specialization..." />
+    </div>
+    <div class="col-md-2">
+        <select name="wardType" class="form-select form-select-sm">
+            <option value="">All Wards</option>
+            @foreach (var wt in new[]{"General","ICU","Maternity","Pediatric"})
+            {
+                <option value="@wt" selected="@(ViewBag.WardType == wt)">@wt</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="available" class="form-select form-select-sm">
+            <option value="">All</option>
+            <option value="true" selected="@(ViewBag.Available?.ToString() == "True")">Available</option>
+            <option value="false" selected="@(ViewBag.Available?.ToString() == "False")">Unavailable</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary btn-sm">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Clear</a>
+    </div>
+</form>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-success">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Ward</th>
+                        <th>Schedule</th>
+                        <th>Experience</th>
+                        <th>Available</th>
+                        <th>On Duty</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td>@d.DoctorId</td>
+                            <td class="fw-semibold">@d.FullName</td>
+                            <td>@d.Specialization</td>
+                            <td><span class="badge bg-info">@d.Ward?.WardType</span></td>
+                            <td class="small text-muted">@d.ConsultationSchedule</td>
+                            <td>@d.YearsExperience yrs</td>
+                            <td>
+                                <span class="badge @(d.IsAvailable ? "bg-success" : "bg-secondary")">
+                                    @(d.IsAvailable ? "Yes" : "No")
+                                </span>
+                            </td>
+                            <td>
+                                <form asp-action="ToggleDuty" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@d.DoctorId" />
+                                    <button type="submit" class="btn btn-sm @(d.OnDuty ? "btn-warning" : "btn-outline-secondary")">
+                                        @(d.OnDuty ? "On Duty" : "Off Duty")
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@d.DoctorId" class="btn btn-outline-info btn-sm">View</a>
+                                <a asp-action="Edit" asp-route-id="@d.DoctorId" class="btn btn-outline-warning btn-sm">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@d.DoctorId" class="btn btn-outline-danger btn-sm">Del</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="9" class="text-center text-muted py-4">No doctors found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
