@@ -1,0 +1,28 @@
+@model HospitalManagement.Models.Patient
+@{
+    ViewData["Title"] = "Delete Patient";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold text-danger">Delete Patient</h4>
+</div>
+
+<div class="card border-danger border-0 shadow-sm" style="max-width:600px;">
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <strong>Warning!</strong> This will permanently delete the patient record. This action cannot be undone.
+        </div>
+        <dl class="row">
+            <dt class="col-4">Name</dt><dd class="col-8">@Model.FullName</dd>
+            <dt class="col-4">Date of Birth</dt><dd class="col-8">@Model.DateOfBirth.ToString("dd MMM yyyy")</dd>
+            <dt class="col-4">Gender</dt><dd class="col-8">@Model.Gender</dd>
+            <dt class="col-4">Blood Group</dt><dd class="col-8">@Model.BloodGroup</dd>
+            <dt class="col-4">Phone</dt><dd class="col-8">@Model.PhoneNumber</dd>
+        </dl>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="PatientId" />
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

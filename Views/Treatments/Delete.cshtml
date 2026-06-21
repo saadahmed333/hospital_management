@@ -1,0 +1,36 @@
+@model HospitalManagement.Models.Treatment
+@{
+    ViewData["Title"] = "Delete Treatment";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold text-danger">Delete Treatment</h4>
+</div>
+
+<div class="card border-danger border-0 shadow-sm" style="max-width:600px;">
+    <div class="card-body">
+        <h5 class="card-title">Are you sure you want to delete this treatment?</h5>
+        <p class="text-muted">This action cannot be undone.</p>
+        
+        <dl class="row">
+            <dt class="col-sm-4">Treatment ID</dt>
+            <dd class="col-sm-8">@Model.TreatmentId</dd>
+            <dt class="col-sm-4">Treatment Name</dt>
+            <dd class="col-sm-8">@Model.TreatmentName</dd>
+            <dt class="col-sm-4">Type</dt>
+            <dd class="col-sm-8">@Model.TreatmentType</dd>
+            <dt class="col-sm-4">Doctor</dt>
+            <dd class="col-sm-8">@Model.Doctor?.FullName</dd>
+            <dt class="col-sm-4">Date</dt>
+            <dd class="col-sm-8">@Model.TreatmentDate.ToString("MMM dd, yyyy")</dd>
+            <dt class="col-sm-4">Cost</dt>
+            <dd class="col-sm-8">@Model.Cost.ToString("C")</dd>
+        </dl>
+        
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="TreatmentId" />
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

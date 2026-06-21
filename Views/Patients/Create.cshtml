@@ -1,0 +1,91 @@
+@model HospitalManagement.Models.Patient
+@{
+    ViewData["Title"] = "Register Patient";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold">Register New Patient</h4>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="FullName" class="form-label fw-semibold"></label>
+                    <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+                    <input asp-for="DateOfBirth" class="form-control" type="date" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Gender" class="form-label fw-semibold"></label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="">Select...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="BloodGroup" class="form-label fw-semibold"></label>
+                    <select asp-for="BloodGroup" class="form-select">
+                        <option value="">Select...</option>
+                        @foreach (var bg in new[]{"A+","A-","B+","B-","AB+","AB-","O+","O-"})
+                        {
+                            <option value="@bg">@bg</option>
+                        }
+                    </select>
+                    <span asp-validation-for="BloodGroup" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="0300-1234567" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-5">
+                    <label asp-for="Email" class="form-label fw-semibold"></label>
+                    <input asp-for="Email" class="form-control" placeholder="patient@email.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Address" class="form-label fw-semibold"></label>
+                    <input asp-for="Address" class="form-control" placeholder="Full address" />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EmergencyContactName" class="form-label fw-semibold"></label>
+                    <input asp-for="EmergencyContactName" class="form-control" />
+                    <span asp-validation-for="EmergencyContactName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EmergencyContactPhone" class="form-label fw-semibold"></label>
+                    <input asp-for="EmergencyContactPhone" class="form-control" />
+                    <span asp-validation-for="EmergencyContactPhone" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="MedicalHistory" class="form-label fw-semibold"></label>
+                    <textarea asp-for="MedicalHistory" class="form-control" rows="3" placeholder="Previous conditions, diagnoses, surgeries..."></textarea>
+                    <span asp-validation-for="MedicalHistory" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="KnownAllergies" class="form-label fw-semibold"></label>
+                    <input asp-for="KnownAllergies" class="form-control" placeholder="e.g. Penicillin, Sulfa drugs, None" />
+                    <span asp-validation-for="KnownAllergies" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Register Patient</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

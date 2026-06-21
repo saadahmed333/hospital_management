@@ -1,0 +1,27 @@
+@model HospitalManagement.Models.Doctor
+@{
+    ViewData["Title"] = "Delete Doctor";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold text-danger">Delete Doctor</h4>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width:550px;">
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <strong>Warning!</strong> This will permanently remove the doctor record.
+        </div>
+        <dl class="row">
+            <dt class="col-4">Name</dt><dd class="col-8">@Model.FullName</dd>
+            <dt class="col-4">Specialization</dt><dd class="col-8">@Model.Specialization</dd>
+            <dt class="col-4">Ward</dt><dd class="col-8">@Model.Ward?.Name</dd>
+            <dt class="col-4">Email</dt><dd class="col-8">@Model.Email</dd>
+        </dl>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="DoctorId" />
+            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

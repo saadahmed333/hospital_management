@@ -1,0 +1,74 @@
+@model HospitalManagement.Models.Doctor
+@{
+    ViewData["Title"] = "Edit Doctor";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold">Edit Doctor &mdash; @Model.FullName</h4>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input asp-for="DoctorId" type="hidden" />
+            <input asp-for="JoinedDate" type="hidden" />
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="FullName" class="form-label fw-semibold"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Specialization" class="form-label fw-semibold"></label>
+                    <input asp-for="Specialization" class="form-control" />
+                    <span asp-validation-for="Specialization" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label fw-semibold"></label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="WardId" class="form-label fw-semibold">Assigned Ward</label>
+                    <select asp-for="WardId" asp-items="ViewBag.Wards" class="form-select"></select>
+                    <span asp-validation-for="WardId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="YearsExperience" class="form-label fw-semibold"></label>
+                    <input asp-for="YearsExperience" class="form-control" type="number" min="0" max="60" />
+                    <span asp-validation-for="YearsExperience" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="ConsultationSchedule" class="form-label fw-semibold"></label>
+                    <input asp-for="ConsultationSchedule" class="form-control" />
+                    <span asp-validation-for="ConsultationSchedule" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mt-2">
+                        <input asp-for="IsAvailable" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsAvailable" class="form-check-label fw-semibold">Is Available</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mt-2">
+                        <input asp-for="OnDuty" class="form-check-input" type="checkbox" />
+                        <label asp-for="OnDuty" class="form-check-label fw-semibold">On Duty</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-warning">Save Changes</button>
+                <a asp-action="Details" asp-route-id="@Model.DoctorId" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

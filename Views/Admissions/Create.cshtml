@@ -1,0 +1,105 @@
+@model HospitalManagement.Models.Admission
+@{
+    ViewData["Title"] = "New Admission";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold">Admit Patient</h4>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post" id="admissionForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="PatientId" class="form-label fw-semibold">Patient</label>
+                    @if (ViewBag.PreselectedPatientId != null)
+                    {
+                        <select asp-for="PatientId" asp-items="ViewBag.Patients" class="form-select" disabled>
+                        </select>
+                        <input type="hidden" name="PatientId" value="@ViewBag.PreselectedPatientId" />
+                    }
+                    else
+                    {
+                        <select asp-for="PatientId" asp-items="ViewBag.Patients" class="form-select">
+                            <option value="">Select Patient...</option>
+                        </select>
+                    }
+                    <span asp-validation-for="PatientId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DoctorId" class="form-label fw-semibold">Attending Doctor</label>
+                    <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-select">
+                        <option value="">Select Doctor...</option>
+                    </select>
+                    <span asp-validation-for="DoctorId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="WardId" class="form-label fw-semibold">Ward</label>
+                    <select asp-for="WardId" asp-items="ViewBag.Wards" class="form-select" id="wardSelect">
+                        <option value="">Select Ward...</option>
+                    </select>
+                    <span asp-validation-for="WardId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="BedId" class="form-label fw-semibold">Bed</label>
+                    <select asp-for="BedId" class="form-select" id="bedSelect">
+                        <option value="">Select Ward First...</option>
+                    </select>
+                    <span asp-validation-for="BedId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="AdmissionType" class="form-label fw-semibold"></label>
+                    <select asp-for="AdmissionType" class="form-select">
+                        <option value="OPD">OPD</option>
+                        <option value="Emergency">Emergency</option>
+                    </select>
+                    <span asp-validation-for="AdmissionType" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ChiefComplaint" class="form-label fw-semibold"></label>
+                    <textarea asp-for="ChiefComplaint" class="form-control" rows="3" placeholder="Patient's main complaint..."></textarea>
+                    <span asp-validation-for="ChiefComplaint" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Diagnosis" class="form-label fw-semibold">Initial Diagnosis</label>
+                    <textarea asp-for="Diagnosis" class="form-control" rows="3" placeholder="Preliminary diagnosis..."></textarea>
+                    <span asp-validation-for="Diagnosis" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="ExpectedDischargeDate" class="form-label fw-semibold"></label>
+                    <input asp-for="ExpectedDischargeDate" class="form-control" type="date" />
+                    <span asp-validation-for="ExpectedDischargeDate" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Admit Patient</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $('#wardSelect').change(function () {
+            var wardId = $(this).val();
+            var bedSelect = $('#bedSelect');
+            bedSelect.html('<option value="">Loading...</option>');
+            if (wardId) {
+                $.getJSON('/Admissions/GetAvailableBeds', { wardId: wardId }, function (beds) {
+                    bedSelect.html('<option value="">Select Bed...</option>');
+                    $.each(beds, function (i, b) {
+                        bedSelect.append($('<option>').val(b.bedId).text(b.bedNumber + ' (' + b.bedType + ')'));
+                    });
+                    if (beds.length === 0) {
+                        bedSelect.html('<option value="">No available beds</option>');
+                    }
+                });
+            } else {
+                bedSelect.html('<option value="">Select Ward First...</option>');
+            }
+        });
+    </script>
+}

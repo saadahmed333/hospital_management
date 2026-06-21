@@ -1,0 +1,115 @@
+@model HospitalManagement.Models.Admission
+@{
+    ViewData["Title"] = "Admission Details";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="mb-0 fw-bold">Admission #@Model.AdmissionId</h4>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.AdmissionId" class="btn btn-warning btn-sm">Edit</a>
+        <a asp-controller="Treatments" asp-action="Create" asp-route-admissionId="@Model.AdmissionId" class="btn btn-success btn-sm">+ Treatment</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Patient Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Patient Name</dt>
+                    <dd class="col-sm-8">@Model.Patient?.FullName</dd>
+                    <dt class="col-sm-4">Patient ID</dt>
+                    <dd class="col-sm-8">@Model.PatientId</dd>
+                    <dt class="col-sm-4">Admission Date</dt>
+                    <dd class="col-sm-8">@Model.AdmissionDate.ToString("MMM dd, yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Admission Type</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.AdmissionType == "Emergency" ? "bg-danger" : "bg-primary")">@Model.AdmissionType</span>
+                    </dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.Status == "Active" ? "bg-success" : Model.Status == "Discharged" ? "bg-secondary" : "bg-warning")">@Model.Status</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Medical Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Chief Complaint</dt>
+                    <dd class="col-sm-8">@Model.ChiefComplaint ?? "N/A"</dd>
+                    <dt class="col-sm-4">Diagnosis</dt>
+                    <dd class="col-sm-8">@Model.Diagnosis ?? "N/A"</dd>
+                    <dt class="col-sm-4">Expected Discharge</dt>
+                    <dd class="col-sm-8">@Model.ExpectedDischargeDate?.ToString("MMM dd, yyyy") ?? "Not set"</dd>
+                    <dt class="col-sm-4">Actual Discharge</dt>
+                    <dd class="col-sm-8">@Model.ActualDischargeDate?.ToString("MMM dd, yyyy HH:mm") ?? "Not discharged"</dd>
+                    <dt class="col-sm-4">Stay Duration</dt>
+                    <dd class="col-sm-8">@Model.StayDuration days</dd>
+                </dl>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.DischargeNotes))
+        {
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white fw-semibold">Discharge Notes</div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.DischargeNotes</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Assigned Doctor</div>
+            <div class="card-body">
+                <h5 class="fw-bold">@Model.Doctor?.FullName</h5>
+                <p class="text-muted mb-0">@Model.Doctor?.Specialization</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Room & Bed</div>
+            <div class="card-body">
+                <h5 class="fw-bold">@Model.Ward?.WardType</h5>
+                <p class="text-muted mb-0">Bed #@Model.Bed?.BedNumber</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                <span>Treatments</span>
+                <a asp-controller="Treatments" asp-action="Index" asp-route-admissionId="@Model.AdmissionId" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Treatments != null && Model.Treatments.Any())
+                {
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th>Treatment</th><th>Date</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model.Treatments.Take(5))
+                            {
+                                <tr>
+                                    <td class="small">@t.TreatmentName</td>
+                                    <td class="small text-muted">@t.TreatmentDate.ToString("MMM dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-3">No treatments recorded</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

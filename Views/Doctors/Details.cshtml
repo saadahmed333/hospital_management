@@ -1,0 +1,65 @@
+@model HospitalManagement.Models.Doctor
+@{
+    ViewData["Title"] = "Doctor Details";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="mb-0 fw-bold">@Model.FullName</h4>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.DoctorId" class="btn btn-warning btn-sm">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-success text-white fw-semibold">Doctor Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Doctor ID</dt><dd class="col-7">@Model.DoctorId</dd>
+                    <dt class="col-5">Specialization</dt><dd class="col-7">@Model.Specialization</dd>
+                    <dt class="col-5">Ward</dt><dd class="col-7"><span class="badge bg-info">@Model.Ward?.Name</span></dd>
+                    <dt class="col-5">Experience</dt><dd class="col-7">@Model.YearsExperience years</dd>
+                    <dt class="col-5">Joined</dt><dd class="col-7">@Model.JoinedDate.ToString("dd MMM yyyy")</dd>
+                    <dt class="col-5">Email</dt><dd class="col-7 small">@Model.Email</dd>
+                    <dt class="col-5">Phone</dt><dd class="col-7">@Model.PhoneNumber</dd>
+                    <dt class="col-5">Schedule</dt><dd class="col-7 small">@Model.ConsultationSchedule</dd>
+                    <dt class="col-5">Available</dt>
+                    <dd class="col-7"><span class="badge @(Model.IsAvailable?"bg-success":"bg-secondary")">@(Model.IsAvailable?"Yes":"No")</span></dd>
+                    <dt class="col-5">On Duty</dt>
+                    <dd class="col-7"><span class="badge @(Model.OnDuty?"bg-warning text-dark":"bg-secondary")">@(Model.OnDuty?"On Duty":"Off Duty")</span></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Active Admissions (@Model.Admissions.Count(a => a.Status == "Active"))</div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr><th>#</th><th>Patient</th><th>Ward</th><th>Admitted</th><th>Type</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.Admissions.OrderByDescending(x => x.AdmissionDate).Take(8))
+                        {
+                            <tr>
+                                <td>@a.AdmissionId</td>
+                                <td>@a.Patient?.FullName</td>
+                                <td class="small">@a.Ward?.Name</td>
+                                <td class="small">@a.AdmissionDate.ToString("dd MMM yy")</td>
+                                <td><span class="badge @(a.AdmissionType=="Emergency"?"bg-danger":"bg-primary")">@a.AdmissionType</span></td>
+                                <td><span class="badge @(a.Status=="Active"?"bg-success":"bg-secondary")">@a.Status</span></td>
+                            </tr>
+                        }
+                        @if (!Model.Admissions.Any())
+                        {
+                            <tr><td colspan="6" class="text-center text-muted py-3">No admissions.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

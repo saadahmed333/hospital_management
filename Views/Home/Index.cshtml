@@ -1,0 +1,323 @@
+@model HospitalManagement.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h4 class="mb-0 fw-bold">Hospital Dashboard</h4>
+        <small class="text-muted">GCN = 2 &mdash; Average Stay Duration &amp; Bed Utilization Trends</small>
+    </div>
+    <div>
+        <span class="badge bg-secondary">Group Config: 2</span>
+        <span class="badge bg-info ms-1">Reg: 67428, 68209</span>
+    </div>
+</div>
+
+<!-- Summary Cards Row 1 -->
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-primary h-100">
+            <div class="card-body">
+                <div class="text-primary fw-semibold small text-uppercase">Total Patients</div>
+                <div class="fs-2 fw-bold">@Model.TotalPatients</div>
+                <div class="text-muted small">Registered</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-success h-100">
+            <div class="card-body">
+                <div class="text-success fw-semibold small text-uppercase">Active Admissions</div>
+                <div class="fs-2 fw-bold">@Model.ActiveAdmissions</div>
+                <div class="text-muted small">Currently admitted</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-info h-100">
+            <div class="card-body">
+                <div class="text-info fw-semibold small text-uppercase">Available Beds</div>
+                <div class="fs-2 fw-bold">@Model.AvailableBeds</div>
+                <div class="text-muted small">of @Model.TotalBeds total</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-warning h-100">
+            <div class="card-body">
+                <div class="text-warning fw-semibold small text-uppercase">Doctors on Duty</div>
+                <div class="fs-2 fw-bold">@Model.DoctorsOnDuty</div>
+                <div class="text-muted small">of @Model.TotalDoctors total</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GCN=2 Feature Cards: Avg Stay Duration + Bed Utilization -->
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Avg Patient Stay Duration</div>
+                <div class="display-5 fw-bold text-primary">@Model.AverageStayDuration.ToString("F1")</div>
+                <div class="text-muted">days (discharged patients)</div>
+                <hr />
+                <div class="text-muted small">Discharged this month: <strong>@Model.DischargedThisMonth</strong></div>
+                <div class="text-muted small">Pending discharges: <strong class="text-warning">@Model.PendingDischarges</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Overall Bed Utilization</div>
+                <div class="display-5 fw-bold text-success">@Model.BedUtilizationRate<span class="fs-4">%</span></div>
+                <div class="text-muted">@Model.OccupiedBeds occupied / @Model.TotalBeds total</div>
+                <hr />
+                <div class="progress" style="height:12px;">
+                    <div class="progress-bar bg-success" style="width:@Model.BedUtilizationRate%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Today's Activity</div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <div class="fs-3 fw-bold text-danger">@Model.EmergencyAdmissionsToday</div>
+                        <div class="text-muted small">Emergency</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fs-3 fw-bold text-primary">@Model.AdmissionsLast24Hrs</div>
+                        <div class="text-muted small">Last 24hrs</div>
+                    </div>
+                </div>
+                <hr />
+                <a asp-controller="Admissions" asp-action="Create" class="btn btn-sm btn-primary w-100">+ New Admission</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-3">
+    <!-- Bed Utilization by Ward (GCN=2 chart) -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Bed Utilization by Ward</div>
+            <div class="card-body">
+                <canvas id="wardUtilizationChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- Avg Stay Duration by Ward (GCN=2 chart) -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Avg Stay Duration by Ward (days)</div>
+            <div class="card-body">
+                <canvas id="avgStayChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Inflow Trend -->
+<div class="row g-3 mb-3">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Monthly Patient Inflow (last 6 months)</div>
+            <div class="card-body">
+                <canvas id="monthlyInflowChart" height="150"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold">Ward Occupancy Summary</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr><th>Ward</th><th>Beds</th><th>%</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var w in Model.WardOccupancies)
+                        {
+                            var pct = w.OccupancyPercentage;
+                            var cls = pct >= 90 ? "danger" : pct >= 70 ? "warning" : "success";
+                            <tr>
+                                <td>@w.WardType</td>
+                                <td>@w.OccupiedBeds / @w.TotalBeds</td>
+                                <td><span class="badge bg-@cls">@pct%</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Admissions + Doctor Workload -->
+<div class="row g-3 mb-3">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Recent Admissions</span>
+                <a asp-controller="Admissions" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th><th>Patient</th><th>Doctor</th><th>Ward</th><th>Bed</th><th>Type</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.RecentAdmissions)
+                            {
+                                <tr>
+                                    <td>@a.AdmissionId</td>
+                                    <td>@a.PatientName</td>
+                                    <td>@a.DoctorName</td>
+                                    <td>@a.WardName</td>
+                                    <td><span class="badge bg-secondary">@a.BedNumber</span></td>
+                                    <td>
+                                        <span class="badge @(a.AdmissionType == "Emergency" ? "bg-danger" : "bg-primary")">
+                                            @a.AdmissionType
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(a.Status == "Active" ? "bg-success" : "bg-secondary")">
+                                            @a.Status
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.RecentAdmissions.Any())
+                            {
+                                <tr><td colspan="7" class="text-center text-muted py-3">No admissions yet</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Doctor Workload</span>
+                <a asp-controller="Doctors" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr><th>Doctor</th><th>Specialty</th><th>Patients</th><th>Duty</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.DoctorWorkloads)
+                        {
+                            <tr>
+                                <td class="small">@d.DoctorName.Replace("Dr. ", "")</td>
+                                <td class="small text-muted">@d.Specialization</td>
+                                <td><span class="badge bg-info">@d.ActivePatients</span></td>
+                                <td>
+                                    @if (d.OnDuty)
+                                    {
+                                        <span class="badge bg-success">On Duty</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Off</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Ward Utilization Chart (Bed Utilization Trends - GCN=2)
+    const wardNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WardOccupancies.Select(w => w.WardType).ToList()));
+    const wardOccupied = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WardOccupancies.Select(w => w.OccupancyPercentage).ToList()));
+    const wardTotal = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WardOccupancies.Select(w => w.TotalBeds).ToList()));
+
+    new Chart(document.getElementById('wardUtilizationChart'), {
+        type: 'bar',
+        data: {
+            labels: wardNames,
+            datasets: [{
+                label: 'Occupancy %',
+                data: wardOccupied,
+                backgroundColor: ['#0d6efd88','#dc354588','#20c99788','#ffc10788'],
+                borderColor: ['#0d6efd','#dc3545','#20c997','#ffc107'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
+            }
+        }
+    });
+
+    // Avg Stay Duration by Ward (GCN=2)
+    const avgWardNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WardAvgStays.Select(w => w.WardName).ToList()));
+    const avgDays = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WardAvgStays.Select(w => Math.Round(w.AvgDays, 1)).ToList()));
+
+    new Chart(document.getElementById('avgStayChart'), {
+        type: 'bar',
+        data: {
+            labels: avgWardNames,
+            datasets: [{
+                label: 'Avg Stay (days)',
+                data: avgDays,
+                backgroundColor: '#6610f288',
+                borderColor: '#6610f2',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Monthly Inflow Chart
+    const months = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyInflows.Select(m => m.Month).ToList()));
+    const counts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyInflows.Select(m => m.Count).ToList()));
+
+    new Chart(document.getElementById('monthlyInflowChart'), {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Patient Admissions',
+                data: counts,
+                borderColor: '#0d6efd',
+                backgroundColor: '#0d6efd22',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+</script>
+}
