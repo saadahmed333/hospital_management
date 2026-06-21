@@ -1,0 +1,80 @@
+@model HospitalManagement.Models.Treatment
+@{
+    ViewData["Title"] = "Add Treatment";
+}
+
+<div class="page-header">
+    <h4 class="mb-0 fw-bold">Add New Treatment</h4>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="AdmissionId" class="form-label">Admission</label>
+                    <select asp-for="AdmissionId" class="form-select" asp-items="ViewBag.AdmissionId"></select>
+                    <span asp-validation-for="AdmissionId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DoctorId" class="form-label">Doctor</label>
+                    <select asp-for="DoctorId" class="form-select" asp-items="ViewBag.DoctorId"></select>
+                    <span asp-validation-for="DoctorId" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="TreatmentName" class="form-label">Treatment Name</label>
+                    <input asp-for="TreatmentName" class="form-control" />
+                    <span asp-validation-for="TreatmentName" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="TreatmentType" class="form-label">Treatment Type</label>
+                    <select asp-for="TreatmentType" class="form-select">
+                        <option value="Medication">Medication</option>
+                        <option value="Surgery">Surgery</option>
+                        <option value="Therapy">Therapy</option>
+                        <option value="Observation">Observation</option>
+                        <option value="Diagnostic">Diagnostic</option>
+                        <option value="Procedure">Procedure</option>
+                    </select>
+                    <span asp-validation-for="TreatmentType" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Medication" class="form-label">Medication (if applicable)</label>
+                    <input asp-for="Medication" class="form-control" />
+                    <span asp-validation-for="Medication" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="TreatmentDate" class="form-label">Treatment Date</label>
+                    <input asp-for="TreatmentDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="TreatmentDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Cost" class="form-label">Cost</label>
+                    <input asp-for="Cost" class="form-control" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="Cost" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label">Additional Notes</label>
+                    <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Save Treatment</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,96 @@
+@model HospitalManagement.Models.Patient
+@{
+    ViewData["Title"] = "Patient Details";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="mb-0 fw-bold">Patient: @Model.FullName</h4>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.PatientId" class="btn btn-warning btn-sm">Edit</a>
+        <a asp-controller="Admissions" asp-action="Create" asp-route-patientId="@Model.PatientId" class="btn btn-success btn-sm">Admit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white fw-semibold">Personal Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Patient ID</dt><dd class="col-7">@Model.PatientId</dd>
+                    <dt class="col-5">Date of Birth</dt><dd class="col-7">@Model.DateOfBirth.ToString("dd MMM yyyy")</dd>
+                    <dt class="col-5">Age</dt><dd class="col-7">@Model.Age years</dd>
+                    <dt class="col-5">Gender</dt><dd class="col-7">@Model.Gender</dd>
+                    <dt class="col-5">Blood Group</dt><dd class="col-7"><span class="badge bg-danger">@Model.BloodGroup</span></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-info text-white fw-semibold">Contact Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Phone</dt><dd class="col-7">@Model.PhoneNumber</dd>
+                    <dt class="col-5">Email</dt><dd class="col-7">@(Model.Email ?? "—")</dd>
+                    <dt class="col-12 mt-2">Address</dt>
+                    <dd class="col-12 text-muted small">@Model.Address</dd>
+                    <dt class="col-5 mt-2">Emerg. Contact</dt><dd class="col-7 mt-2">@Model.EmergencyContactName</dd>
+                    <dt class="col-5">Emerg. Phone</dt><dd class="col-7">@Model.EmergencyContactPhone</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning fw-semibold">Medical History</div>
+            <div class="card-body">
+                <p class="small"><strong>History:</strong><br />@(Model.MedicalHistory ?? "No history recorded")</p>
+                <p class="small mb-0"><strong>Known Allergies:</strong><br />@(Model.KnownAllergies ?? "None")</p>
+                <hr />
+                <small class="text-muted">Registered: @Model.RegistrationDate.ToString("dd MMM yyyy")</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admission History -->
+<div class="card border-0 shadow-sm mt-3">
+    <div class="card-header bg-white fw-semibold">Admission History (@Model.Admissions.Count total)</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th><th>Admitted</th><th>Doctor</th><th>Ward</th><th>Bed</th>
+                        <th>Type</th><th>Status</th><th>Stay</th><th>Treatments</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.Admissions.OrderByDescending(x => x.AdmissionDate))
+                    {
+                        <tr>
+                            <td>@a.AdmissionId</td>
+                            <td class="small">@a.AdmissionDate.ToString("dd MMM yy")</td>
+                            <td class="small">@a.Doctor?.FullName</td>
+                            <td class="small">@a.Ward?.Name</td>
+                            <td><span class="badge bg-secondary">@a.Bed?.BedNumber</span></td>
+                            <td><span class="badge @(a.AdmissionType=="Emergency"?"bg-danger":"bg-primary")">@a.AdmissionType</span></td>
+                            <td><span class="badge @(a.Status=="Active"?"bg-success":"bg-secondary")">@a.Status</span></td>
+                            <td class="small">@(a.StayDuration) days</td>
+                            <td><span class="badge bg-info">@a.Treatments.Count</span></td>
+                            <td>
+                                <a asp-controller="Admissions" asp-action="Details" asp-route-id="@a.AdmissionId" class="btn btn-outline-primary btn-sm">View</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Admissions.Any())
+                    {
+                        <tr><td colspan="10" class="text-center text-muted py-3">No admissions recorded.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
